@@ -2,8 +2,8 @@ terraform {
   required_providers {
     # https://registry.terraform.io/providers/Telmate/proxmox/latest/docs
     proxmox = {
-      source = "Telmate/proxmox"
-      version = "2.9.7"
+      source = "thegameprofi/proxmox" #change from Telemate/proxmox
+      version = "2.9.15"
     }
   }
 }

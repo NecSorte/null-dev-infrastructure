@@ -14,16 +14,23 @@ resource "proxmox_vm_qemu" "control-plane" {
     cores    = 2
     sockets  = 2
     cpu      = "host"
-    memory   = 4096
+    memory   = 8192
     scsihw   = "virtio-scsi-pci"
     bootdisk = "scsi0"
 
-    disk {
-        slot     = 0
-        size     = "10G"
-        type     = "lvm"
-        storage  = "local-lvm"
-        iothread = 1
+    disks {
+        scsi {
+        scsi0 {
+            disk {
+            size        = "50G"
+            storage     = "local-lvm"
+            iothread    = true
+            cache       = "writeback"
+            backup      = true
+            storage_type = "thin"
+            }
+        }
+        }
     }
 
     network {
@@ -88,16 +95,23 @@ resource "proxmox_vm_qemu" "worker" {
     cores    = 2
     sockets  = 2
     cpu      = "host"
-    memory   = 4096
+    memory   = 8192
     scsihw   = "virtio-scsi-pci"
     bootdisk = "scsi0"
 
-    disk {
-        slot     = 0
-        size     = "10G"
-        type     = "lvm"
-        storage  = "local-lvm"
-        iothread = 1
+    disks {
+        scsi {
+        scsi0 {
+            disk {
+            size        = "10G"
+            storage     = "local-lvm"
+            iothread    = true
+            cache       = "writeback"
+            backup      = true
+            storage_type = "thin"
+            }
+        }
+        }
     }
 
     network {
