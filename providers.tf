@@ -3,7 +3,7 @@ terraform {
     # https://registry.terraform.io/providers/Telmate/proxmox/latest/docs
     proxmox = {
       source = "thegameprofi/proxmox" #change from Telemate/proxmox
-      version = "2.9.15"
+      version = "2.10"
     }
   }
 }

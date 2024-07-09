@@ -22,12 +22,11 @@ resource "proxmox_vm_qemu" "control-plane" {
         scsi {
         scsi0 {
             disk {
-            size        = "50G"
+            size        = 10
             storage     = "local-lvm"
             iothread    = true
             cache       = "writeback"
             backup      = true
-            storage_type = "thin"
             }
         }
         }
@@ -103,12 +102,11 @@ resource "proxmox_vm_qemu" "worker" {
         scsi {
         scsi0 {
             disk {
-            size        = "10G"
+            size        = 10
             storage     = "local-lvm"
             iothread    = true
             cache       = "writeback"
             backup      = true
-            storage_type = "thin"
             }
         }
         }
