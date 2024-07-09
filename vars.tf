@@ -11,7 +11,7 @@ variable "proxmox_dns" {
 }
 
 variable "template_name" {
-    default = "ubuntu-2004-cloudinit-template"
+    default = "ubuntu-focal-cloudinit-template"
 }
 
 variable "ssh_private_key_path" {

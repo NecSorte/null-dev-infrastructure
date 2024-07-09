@@ -12,17 +12,17 @@ resource "proxmox_vm_qemu" "control-plane" {
     agent    = 1
     os_type  = "cloud-init"
     cores    = 2
-    sockets  = 1
+    sockets  = 2
     cpu      = "host"
-    memory   = 2048
+    memory   = 4096
     scsihw   = "virtio-scsi-pci"
     bootdisk = "scsi0"
 
     disk {
         slot     = 0
         size     = "10G"
-        type     = "scsi"
-        storage  = "iscsi-lvm"
+        type     = "lvm"
+        storage  = "local-lvm"
         iothread = 1
     }
 
@@ -71,7 +71,7 @@ resource "proxmox_vm_qemu" "control-plane" {
 
 resource "proxmox_vm_qemu" "worker" {
     # agent (worker) nodes
-    count   = 2
+    count   = 3
     name    = "worker-${count.index}"
     tags    = "worker"
 
@@ -86,17 +86,17 @@ resource "proxmox_vm_qemu" "worker" {
     agent    = 1
     os_type  = "cloud-init"
     cores    = 2
-    sockets  = 1
+    sockets  = 2
     cpu      = "host"
-    memory   = 2048
+    memory   = 4096
     scsihw   = "virtio-scsi-pci"
     bootdisk = "scsi0"
 
     disk {
         slot     = 0
         size     = "10G"
-        type     = "scsi"
-        storage  = "iscsi-lvm"
+        type     = "lvm"
+        storage  = "local-lvm"
         iothread = 1
     }
 
