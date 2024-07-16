@@ -5,6 +5,7 @@ resource "proxmox_vm_qemu" "control-plane" {
     name    = "control-${count.index}"
     tags    = "control"
 
+ 
     target_node = var.proxmox_node
 
     clone = var.template_name
@@ -20,15 +21,20 @@ resource "proxmox_vm_qemu" "control-plane" {
 
     disks {
         scsi {
-        scsi0 {
-            disk {
-            size        = 10
-            storage     = "local-lvm"
-            iothread    = true
-            cache       = "writeback"
-            backup      = true
+            scsi0 {
+                disk {
+                    size      = 10
+                    storage   = "local-lvm"
+                    iothread  = true
+                    cache     = "writeback"
+                    backup    = true
+                }
             }
-        }
+            scsi1 {
+                cloudinit {
+                    storage = "local-lvm"
+                }
+            }
         }
     }
 
@@ -100,15 +106,20 @@ resource "proxmox_vm_qemu" "worker" {
 
     disks {
         scsi {
-        scsi0 {
-            disk {
-            size        = 10
-            storage     = "local-lvm"
-            iothread    = true
-            cache       = "writeback"
-            backup      = true
+            scsi0 {
+                disk {
+                    size      = 10
+                    storage   = "local-lvm"
+                    iothread  = true
+                    cache     = "writeback"
+                    backup    = true
+                }
             }
-        }
+            scsi1 {
+                cloudinit {
+                    storage = "local-lvm"
+                }
+            }
         }
     }
 
