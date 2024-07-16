@@ -35,7 +35,7 @@ resource "proxmox_vm_qemu" "control-plane" {
                     storage = "local-lvm"
                 }
             }
-        }
+        }   
     }
 
     network {
