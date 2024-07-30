@@ -9,11 +9,11 @@ then
     if [[ $HOSTNAME -eq 'control-0' ]]
     then
         echo "Initializing k3s cluster installation..." && \
-        curl -sfL https://get.k3s.io | K3S_TOKEN=${k3s_token} sh -s - --write-kubeconfig-mode=644 --cluster-init
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.0 K3S_TOKEN=${k3s_token} sh -s - --write-kubeconfig-mode=644 --cluster-init
     else
         # TODO: Write a loop to check that control-0 is available before proceeding
         echo "Installing k3s server and joining to cluster..." && \
-        curl -sfL https://get.k3s.io | K3S_TOKEN=${k3s_token} sh -s - --write-kubeconfig-mode=644 --server=https://${k3s_cluster_join_ip}:6443
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.0 K3S_TOKEN=${k3s_token} sh -s - --write-kubeconfig-mode=644 --server=https://${k3s_cluster_join_ip}:6443
     fi
 
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
@@ -21,5 +21,5 @@ then
 else
     # Agent (Worker)
     echo "Installing k3s agent and joining to cluster..." && \
-    curl -sfL https://get.k3s.io | K3S_TOKEN=${k3s_token} K3S_URL=https://${k3s_cluster_join_ip}:6443 sh -
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.0 K3S_TOKEN=${k3s_token} K3S_URL=https://${k3s_cluster_join_ip}:6443 sh -
 fi
