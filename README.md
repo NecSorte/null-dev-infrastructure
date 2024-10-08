@@ -100,6 +100,8 @@ echo "Wait until the VM boots and then access the console to verify."
 sudo qm template $PROXMOX_TEMPLATE_VM_ID
 
 ```
+Note: You MAY have to run the VM, make sure it boots, then hard stop in in proxmox, then manually convert to template. 
+
 
 ## Define and deploy machines in Terraform
 
