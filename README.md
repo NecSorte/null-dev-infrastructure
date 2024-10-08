@@ -53,8 +53,8 @@ export IMAGE_URL="https://cloud-images.ubuntu.com/focal/current/focal-server-clo
 # Set a template name to be used
 export IMAGE_TEMPLATE_NAME="ubuntu-2004-cloudinit-template"
 # Set to your Proxmox storage device name (local-lvm, iscsi-lvm, etc.)
-export PROXMOX_STORAGE_NAME="iscsi-lvm"
-# Set the template VM ID (must not currently be in use; e.g. 9000)
+export PROXMOX_STORAGE_NAME="local-lvm"
+# Set the template VM ID (must not currently be in use; e.g., 9000)
 export PROXMOX_TEMPLATE_VM_ID=9000
 
 # ------
@@ -65,7 +65,6 @@ wget -O $IMAGE_FILENAME $IMAGE_URL
 cp $IMAGE_FILENAME ${IMAGE_FILENAME}.orig
 
 # Customize and prepare a golden image
-# See: http://manpages.ubuntu.com/manpages/focal/man1/virt-sysprep.1.html
 sudo apt update -y && sudo apt install libguestfs-tools -y
 sudo virt-sysprep \
   -a $IMAGE_FILENAME \
@@ -74,23 +73,32 @@ sudo virt-sysprep \
   --install qemu-guest-agent,jq,git,curl,vim,wget,unzip \
   --truncate /etc/machine-id
 
-# Create a VM to use as a template - adjust parameters as needed
+# Create a VM in Proxmox to hold the image
 sudo qm create $PROXMOX_TEMPLATE_VM_ID \
   --name "${IMAGE_TEMPLATE_NAME}" \
   --memory 2048 \
   --cores 2 \
   --net0 virtio,bridge=vmbr0
+
+# Import the customized disk image to Proxmox storage
 sudo qm importdisk $PROXMOX_TEMPLATE_VM_ID $IMAGE_FILENAME $PROXMOX_STORAGE_NAME
+
+# Set up the VM and attach the imported disk as scsi0
 sudo qm set $PROXMOX_TEMPLATE_VM_ID \
-  --scsihw virtio-scsi-pci \
+  --scsihw virtio-scsi-single \
   --scsi0 $PROXMOX_STORAGE_NAME:vm-$PROXMOX_TEMPLATE_VM_ID-disk-0 \
   --boot c --bootdisk scsi0 \
-  --ide2 $PROXMOX_STORAGE_NAME:cloudinit \
+  --ide2 $PROXMOX_STORAGE_NAME:cloudinit,media=cdrom \
   --serial0 socket --vga serial0 \
-  --agent enabled=1
+  --agent enabled=1 --ipconfig0 ip=dhcp
 
-# Convert VM to a template
+# Verify the VM boots correctly before converting to a template
+qm start $PROXMOX_TEMPLATE_VM_ID
+echo "Wait until the VM boots and then access the console to verify."
+
+# Convert to a template after validation
 sudo qm template $PROXMOX_TEMPLATE_VM_ID
+
 ```
 
 ## Define and deploy machines in Terraform
