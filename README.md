@@ -64,14 +64,53 @@ export IMAGE_FILENAME="${IMAGE_URL##*/}"
 wget -O $IMAGE_FILENAME $IMAGE_URL
 cp $IMAGE_FILENAME ${IMAGE_FILENAME}.orig
 
-# Customize and prepare a golden image
-sudo apt update -y && sudo apt install libguestfs-tools -y
+# Prepare the image using virt-sysprep
+virt-sysprep \
+  -a $IMAGE_FILENAME \
+  --network \
+  --update \
+  --install qemu-guest-agent,jq,git,curl,vim,wget,unzip \
+  --truncate /etc/machine-id \
+  --firstboot-command 'systemctl enable qemu-guest-agent' \
+  --firstboot-command 'systemctl start qemu-guest-agent'
+
+# Create a VM in Proxmox to hold the image
+qm create $PROXMOX_TEMPLATE_VM_ID \
+  --name "${IMAGE_TEMPLATE_NAME}" \
+  --memory 2048 \
+  --cores 2 \
+  --net0 virtio,bridge=vmbr0
+
+# Import the customized disk image to Proxmox storage
+qm importdisk $PROXMOX_TEMPLATE_VM_ID $IMAGE_FILENAME $PROXMOX_STORAGE_NAME
+
+# Set up the VM and attach the imported disk as scsi0
+qm set $PROXMOX_TEMPLATE_VM_ID \
+  --scsihw virtio-scsi-single \
+  --scsi0 $PROXMOX_STORAGE_NAME:vm-$PROXMOX_TEMPLATE_VM_ID-disk-0 \
+  --boot c --bootdisk scsi0 \
+  --ide2 $PROXMOX_STORAGE_NAME:cloudinit \
+  --serial0 socket --vga serial0 \
+  --agent enabled=1 --ipconfig0 ip=dhcp
+
+# Verify the VM boots correctly before converting to a template
+#qm start $PROXMOX_TEMPLATE_VM_ID
+#echo "Wait until the VM boots and then access the console to verify."
+
+# Convert to a template after validation
+qm template $PROXMOX_TEMPLATE_VM_ID!
+
+### OR WITH SUDO ####
+
+# Prepare the image using virt-sysprep
 sudo virt-sysprep \
   -a $IMAGE_FILENAME \
   --network \
   --update \
   --install qemu-guest-agent,jq,git,curl,vim,wget,unzip \
-  --truncate /etc/machine-id
+  --truncate /etc/machine-id \
+  --firstboot-command 'systemctl enable qemu-guest-agent' \
+  --firstboot-command 'systemctl start qemu-guest-agent'
 
 # Create a VM in Proxmox to hold the image
 sudo qm create $PROXMOX_TEMPLATE_VM_ID \
@@ -88,16 +127,17 @@ sudo qm set $PROXMOX_TEMPLATE_VM_ID \
   --scsihw virtio-scsi-single \
   --scsi0 $PROXMOX_STORAGE_NAME:vm-$PROXMOX_TEMPLATE_VM_ID-disk-0 \
   --boot c --bootdisk scsi0 \
-  --ide2 $PROXMOX_STORAGE_NAME:cloudinit,media=cdrom \
+  --ide2 $PROXMOX_STORAGE_NAME:cloudinit \
   --serial0 socket --vga serial0 \
   --agent enabled=1 --ipconfig0 ip=dhcp
 
 # Verify the VM boots correctly before converting to a template
-qm start $PROXMOX_TEMPLATE_VM_ID
-echo "Wait until the VM boots and then access the console to verify."
+#sudo qm start $PROXMOX_TEMPLATE_VM_ID
+#echo "Wait until the VM boots and then access the console to verify."
 
 # Convert to a template after validation
 sudo qm template $PROXMOX_TEMPLATE_VM_ID
+
 
 ```
 Note: You MAY have to run the VM, make sure it boots, then hard stop in in proxmox, then manually convert to template. 
