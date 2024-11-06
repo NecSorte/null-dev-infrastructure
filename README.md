@@ -101,10 +101,11 @@ qm set $PROXMOX_TEMPLATE_VM_ID \
 #echo "Wait until the VM boots and then access the console to verify."
 
 # Convert to a template after validation
-qm template $PROXMOX_TEMPLATE_VM_ID!
+qm template $PROXMOX_TEMPLATE_VM_ID
+```
 
 ### OR WITH SUDO ####
-
+```sh
 # Prepare the image using virt-sysprep
 sudo virt-sysprep \
   -a $IMAGE_FILENAME \
