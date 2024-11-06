@@ -9,7 +9,7 @@ Before getting started, a Proxmox API token is required so that you can use Terr
 On your Proxmox host:
 
 ```sh
-pveum role add TerraformProv -privs "VM.Allocate VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit"
+pveum role add TerraformProv -privs "VM.Allocate VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit SDN.Use Sys.Audit Sys.PowerMgmt Pool.Allocate Sys.Console Sys.Modify VM.Migrate"
 
 pveum user add terraform-prov@pve
 
@@ -17,6 +17,9 @@ pveum user add terraform-prov@pve
 pveum user token add terraform-prov@pve mytoken
 
 pveum aclmod / -user terraform-prov@pve -tokens 'terraform-prov@pve!mytoken' -role TerraformProv
+
+### Ensure you download & install libguestfs-tools for setting up template. 
+apt install libguestfs-tools -y
 ```
 
 On your workstation:
