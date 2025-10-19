@@ -175,12 +175,18 @@ proxmox_dns = "192.168.0.1"
 # Should match IMAGE_TEMPLATE_NAME set earlier
 template_name = "ubuntu-2004-cloudinit-template"
 ```
+If you have a different storage location in your proxmox from "local-lvm", nano/vim into main.tf and change control & worker node storage. 
 
 Plan and apply. In tests, it took ~11m to create a 5 node cluster (3 control + 2 worker), but of course this varies based on hardware.
 
 ```sh
+terraform init
 terraform plan
 terraform apply -auto-approve
+```
+If you dont have terraform installed:
+```sh
+sudo apt update && sudo apt install -y gnupg software-properties-common curl && curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg && echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list && sudo apt update && sudo apt install -y terraform
 ```
 
 ## Using the k3s cluster
