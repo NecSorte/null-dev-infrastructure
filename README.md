@@ -229,7 +229,7 @@ A popular choice on K3s is to deploy the Rancher UI. See: [Quick Start Guide](ht
 
 ```sh
 # Set a bootstrap admin password
-export PASSWORD_FOR_RANCHER_ADMIN="p4nc4K3s"
+export PASSWORD_FOR_RANCHER_ADMIN="Nu114L!f3"
 
 helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
 
