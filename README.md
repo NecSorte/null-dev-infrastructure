@@ -52,13 +52,13 @@ On your Proxmox host:
 # ------ Configure between the lines as needed
 
 # Set the image URL - must be cloud-init enabled
-export IMAGE_URL="https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
+export IMAGE_URL="https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img" # OLD: export IMAGE_URL="https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
 # Set a template name to be used
-export IMAGE_TEMPLATE_NAME="ubuntu-2004-cloudinit-template"
+export IMAGE_TEMPLATE_NAME="ubuntu-2204-cloudinit-template"
 # Set to your Proxmox storage device name (local-lvm, iscsi-lvm, etc.)
 export PROXMOX_STORAGE_NAME="local-lvm"
 # Set the template VM ID (must not currently be in use; e.g., 9000)
-export PROXMOX_TEMPLATE_VM_ID=9000
+export PROXMOX_TEMPLATE_VM_ID=8000
 
 # ------
 
@@ -173,7 +173,7 @@ proxmox_node = "name-of-proxmox-node-here"
 proxmox_dns = "192.168.0.1"
 
 # Should match IMAGE_TEMPLATE_NAME set earlier
-template_name = "ubuntu-2004-cloudinit-template"
+template_name = "ubuntu-2204-cloudinit-template" # old: "ubuntu-2004-cloudinit-template"
 ```
 If you have a different storage location in your proxmox from "local-lvm", nano/vim into main.tf and change control & worker node storage. 
 With larger servers, consider changing "virtio-scsi-pci" #default to "virtio-scsi-single". 
