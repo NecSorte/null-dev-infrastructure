@@ -176,6 +176,7 @@ proxmox_dns = "192.168.0.1"
 template_name = "ubuntu-2004-cloudinit-template"
 ```
 If you have a different storage location in your proxmox from "local-lvm", nano/vim into main.tf and change control & worker node storage. 
+With larger servers, consider changing "virtio-scsi-pci" #default to "virtio-scsi-single". 
 
 Plan and apply. In tests, it took ~11m to create a 5 node cluster (3 control + 2 worker), but of course this varies based on hardware.
 
