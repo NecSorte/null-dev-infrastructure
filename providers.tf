@@ -3,7 +3,7 @@ terraform {
     # https://registry.terraform.io/providers/Telmate/proxmox/latest/docs
     proxmox = {
       source = "Telmate/proxmox"
-      version = "3.0.1-rc3"
+      version = "3.0.2-rc07"
     }
   }
 }
