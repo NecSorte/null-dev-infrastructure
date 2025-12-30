@@ -21,6 +21,24 @@ pveum aclmod / -user terraform-prov@pve -tokens 'terraform-prov@pve!mytoken' -ro
 ### Ensure you download & install libguestfs-tools for setting up template. 
 apt install libguestfs-tools -y
 ```
+Change local-lvm (or other0 to include this snippet in `/var/lib/vz/snippets/8000-civendor.yaml`
+```yaml
+#cloud-config
+
+write_files:
+  - path: /etc/dhcp/dhclient.conf
+    permissions: "0644"
+    content: |
+      send dhcp-client-identifier = hardware;
+
+package_update: true
+packages:
+  - qemu-guest-agent
+
+runcmd:
+  - systemctl restart systemd-networkd
+  - systemctl enable --now qemu-guest-agent
+```
 
 On your workstation:
 
