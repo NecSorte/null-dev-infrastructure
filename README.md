@@ -9,14 +9,14 @@ Before getting started, a Proxmox API token is required so that you can use Terr
 On your Proxmox host:
 
 ```sh
-pveum role add TerraformProv -privs "Datastore.AllocateSpace Datastore.AllocateTemplate Datastore.Audit Pool.Allocate Pool.Audit Sys.Audit Sys.Console Sys.Modify VM.Allocate VM.Audit VM.Clone VM.Config.CDROM VM.Config.Cloudinit VM.Config.CPU VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Migrate VM.PowerMgmt SDN.Use"
+pveum role add Engineer -privs "Datastore.AllocateSpace Datastore.AllocateTemplate Datastore.Audit Pool.Allocate Pool.Audit Sys.Audit Sys.Console Sys.Modify VM.Allocate VM.Audit VM.Clone VM.Config.CDROM VM.Config.Cloudinit VM.Config.CPU VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Migrate VM.PowerMgmt SDN.Use"
 
-pveum user add terraform-prov@pve
+pveum user add Engineer@pve
 
 ### IMPORTANT: Copy/paste and save the token value (secret) presented after running the command below. You are only shown it once and need to set it later as PM_API_TOKEN_SECRET
-pveum user token add terraform-prov@pve mytoken
+pveum user token add Engineer@pve mytoken
 
-pveum aclmod / -user terraform-prov@pve -tokens 'terraform-prov@pve!mytoken' -role TerraformProv
+pveum aclmod / -user Engineer@pve -tokens 'Engineer@pve!mytoken' -role Engineer
 
 ### Ensure you download & install libguestfs-tools for setting up template. 
 apt install libguestfs-tools -y
@@ -65,8 +65,8 @@ On your workstation:
 
 ```sh
 # Set the below appropriately for your Proxmox API token ID, secret, and API URL
-export PM_API_TOKEN_ID='terraform-prov@pve!mytoken'
-export PM_API_TOKEN_SECRET="afcd8f45-acc1-4d0f-bb12-a70b0777ec11"
+export PM_API_TOKEN_ID='Engineer@pve!mytoken'
+export PM_API_TOKEN_SECRET="afc53f45-a121-412f-bb12-a12b0777ec11"
 export PM_API_URL="https://proxmox-server01.example.com:8006/api2/json"
 
 # Set to the default username for the image being used (e.g. ubuntu, cloud-user, etc.)
@@ -76,7 +76,7 @@ export SSH_USERNAME="ubuntu"
 export SSH_KEY_PATH=~/.ssh/terraform_proxmox_ssh_key_nopassword
 
 # Generate a passwordless SSH keypair to be used
-ssh-keygen -f $SSH_KEY_PATH -t ed25519 -C "${PM_API_TOKEN_ID}" -N "" -q
+ssh-keygen -f ~/.ssh/engineer_ssh_key -t ed25519 -C "Engineer@pve!mytoken" -N "" -q
 ```
 
 ## Prepare a Machine Image
