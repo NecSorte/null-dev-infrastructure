@@ -21,23 +21,44 @@ pveum aclmod / -user terraform-prov@pve -tokens 'terraform-prov@pve!mytoken' -ro
 ### Ensure you download & install libguestfs-tools for setting up template. 
 apt install libguestfs-tools -y
 ```
-Change local-lvm (or other0 to include this snippet in `/var/lib/vz/snippets/8000-civendor.yaml`
+Change local-lvm (or other0 to include this snippet in `/var/lib/vz/snippets/8000-civendor.yaml`, this will run on first boot. 
 ```yaml
 #cloud-config
-
-write_files:
-  - path: /etc/dhcp/dhclient.conf
-    permissions: "0644"
-    content: |
-      send dhcp-client-identifier = hardware;
+#
+# Proxmox Ubuntu Noble – Vendor Cloud-Init Config (SAFE)
+#
 
 package_update: true
+package_upgrade: false
+
 packages:
   - qemu-guest-agent
 
+preserve_hostname: false
+
+# Force MAC-based DHCPv4 identity safely
+write_files:
+  - path: /etc/netplan/99-dhcp-mac.yaml
+    permissions: '0644'
+    content: |
+      network:
+        version: 2
+        ethernets:
+          eth0:
+            dhcp4: true
+            dhcp6: true
+            dhcp-identifier: mac
+
 runcmd:
-  - systemctl restart systemd-networkd
-  - systemctl enable --now qemu-guest-agent
+  # Apply netplan ONCE, after cloud-init networking is stable
+  - netplan generate
+  - netplan apply
+
+  # Enable guest agent (do NOT touch networking here)
+  - systemctl enable qemu-guest-agent
+  - systemctl start qemu-guest-agent
+
+timezone: America/Los_Angeles
 ```
 
 On your workstation:
