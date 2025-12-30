@@ -297,7 +297,7 @@ helm install rancher rancher-latest/rancher \
 # Continue on when you see all pods are ready
 watch kubectl -n cattle-system get pods
 echo "Open your browser to: https://${CONTROL0}.nip.io for the Rancher UI."
-
+kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{"\n"}}'
 # Take the opportunity to change admin's password or you will be locked out...
 # If you end up locked out, you can reset the password using:
 kubectl -n cattle-system exec $(kubectl -n cattle-system get pods -l app=rancher | grep '1/1' | head -1 | awk '{ print $1 }') -- reset-password
